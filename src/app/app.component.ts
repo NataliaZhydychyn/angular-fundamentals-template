@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  combineLatest,
-  filter,
-  forkJoin,
-  map,
-  Observable,
-  Subject,
-  Subscription,
+import { 
+  combineLatest, 
+  debounceTime, 
+  distinctUntilChanged, 
+  filter, 
+  forkJoin, 
+  map, 
+  Observable, 
+  Subject, 
+  Subscription, 
   switchMap,
 } from 'rxjs';
 import { MockDataService } from './mock-data.service';
@@ -46,11 +48,16 @@ export class AppComponent implements OnInit, OnDestroy {
     // 3. Add debounce to prevent API calls until user stop typing.
 
     this.charactersResults$ = this.searchTermByCharacters
-        .pipe
-        // YOUR CODE STARTS HERE
-        (filter((input) => input.length >= 3),
-        switchMap((input) => this.mockDataService.getCharacters(input)));
-        // YOUR CODE ENDS HERE
+    .pipe
+            // YOUR CODE STARTS HERE
+    (
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter((input) => input.length >= 3),
+      switchMap((input) => this.mockDataService.getCharacters(input))
+    );
+    this.subscriptions.push(this.charactersResults$.subscribe());
+    // YOUR CODE ENDS HERE
   }
 
   loadCharactersAndPlanet(): void {
@@ -61,27 +68,29 @@ export class AppComponent implements OnInit, OnDestroy {
       characters: this.mockDataService.getCharacters(),
       planets: this.mockDataService.getPlanets()
     }).pipe(
-        map(({ characters, planets }) => ({
-            characters: characters.map((char: any) => char.name),
-            planets: planets.map((planet: any) => planet.name)
-        }))
+      map(({ characters, planets }) => ({
+        characters: characters.map((char: any) => char.name),
+        planets: planets.map((planet: any) => planet.name)
+      }))
     );
+    this.subscriptions.push(this.planetAndCharactersResults$.subscribe());
     // YOUR CODE ENDS HERE
   }
 
   initLoadingState(): void {
-    /* 5.1. Let's add loader logic to our page. For each request, we have an observable that contains the state of the request. When we send a request the value is true, when the request is completed, the value becomes false. You can get value data with mockDataService.getCharactersLoader() and mockDataService.getPlanetLoader().
+     /* 5.1. Let's add loader logic to our page. For each request, we have an observable that contains the state of the request. When we send a request the value is true, when the request is completed, the value becomes false. You can get value data with mockDataService.getCharactersLoader() and mockDataService.getPlanetLoader().
 
     - Combine the value of each of the streams.
     - Subscribe to changes
     - Check the received value using the areAllValuesTrue function and pass them to the isLoading variable. */
     // YOUR CODE STARTS HERE
-    combineLatest([
-        this.mockDataService.getCharactersLoader(),
-        this.mockDataService.getPlanetLoader()
+    const loadingStateSubscription = combineLatest([
+      this.mockDataService.getCharactersLoader(),
+      this.mockDataService.getPlanetLoader()
     ]).subscribe((loadingStates: boolean[]) => {
-        this.isLoading = this.areAllValuesTrue(loadingStates);
+      this.isLoading = this.areAllValuesTrue(loadingStates);
     });
+    this.subscriptions.push(loadingStateSubscription);
     // YOUR CODE ENDS HERE
   }
 
