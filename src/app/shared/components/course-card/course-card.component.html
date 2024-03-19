@@ -1,21 +1,24 @@
 <div class="course-card">
     <div class="course-card__description">
         <!-- Replace ::text:: with your code -->
-        <div class="course-card__description-title">{{ title }}</div>
-        <div class="course-card__description-text">{{ description }}</div>
+        <div class="course-card__description-title">{{ course.title }}</div>
+        <div class="course-card__description-text">{{ course.description }}</div>
     </div>
     <div class="course-card__info">
         <div class="course-card__info-text">
             <div>
                 <b>Authors: </b>
-                {{ authors.join(', ') }}
+                {{ course.authors.join(', ') }}
             </div>
-            <div><b>Duration: </b><span class="course-card__duration">{{ duration }}</span></div>
-            <div><b>Created: </b><span class="course-card__date">{{ creationDate }}</span></div>
+            <div><b>Duration: </b><span class="course-card__duration">{{ course.duration }}</span></div>
+            <div><b>Created: </b><span class="course-card__date">{{ course.creationDate }}</span></div>
         </div>
-        <div class="course-card__info-actions">
-            <ng-content select=".edit-remove-buttons" *ngIf="editable"></ng-content>
-            <app-button (click)="clickOnShow.emit()">Show Course</app-button>
+        <div class="course-card__buttons">
+            <app-button [buttonText]="showMoreButtonText"></app-button>
+            <ng-container *ngIf="editable">            
+                <app-button [iconName]="'trash'"></app-button>
+                <app-button [iconName]="'edit'"></app-button>
+            </ng-container>
         </div>
     </div>
 </div>
