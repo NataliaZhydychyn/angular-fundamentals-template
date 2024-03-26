@@ -1,4 +1,23 @@
-<button class="app-button" [class.has-icon]="iconName">
-  <fa-icon *ngIf="iconName" [icon]="iconName" class="app-button__icon"></fa-icon>
-  <span  class="app-button__text">{{ buttonText }}</span>
+<!-- <div class="app-button" *ngIf="!iconName; else iconBlock">
+  {{ buttonText }}
+</div>
+
+<ng-template #iconBlock>
+  <div class="app-button app-button__icon">
+    {{ buttonText }}
+    <fa-icon *ngIf="iconName" [icon]="iconName" />
+  </div>
+</ng-template> -->
+
+<button 
+  class="app-button"
+  [type]="type"
+  (click)="onClickHandler($event)"
+  [ngClass]="{ 
+    'app-button__form': !iconName, 
+    'app-button__icon': iconName 
+  }">
+  <!-- Replace the text below with your code -->
+  {{ buttonText }}
+  <fa-icon *ngIf="iconName" [icon]="iconName" />
 </button>
