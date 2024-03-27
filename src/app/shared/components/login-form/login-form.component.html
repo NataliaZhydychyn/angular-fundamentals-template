@@ -1,40 +1,41 @@
 <h2 class="text-align-center">Login</h2>
 <div class="app-plate">
-  <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
     <div class="login-form">
       <div>
         <div class="form__control">
           <label for="email">Email</label>
+
           <input 
-            formControlName="email"
-            type="text"
-            id="email"
-            placeholder="Input text"
+              type="text"
+              id="email"
+              [(ngModel)]="email"
+              name="email"
+              #emailInput="ngModel"
+              placeholder="Input text"
+              required
+              emailValidator
           />
-          <div *ngIf="submitted && email.invalid">
-            <p *ngIf="email.errors?.required" class="text-danger">Email is required</p>
-            <p *ngIf="email.errors?.emailValidator" class="text-danger">Invalid email format</p>
-          </div>
+          <ng-template [ngIf]="emailInput.invalid && (loginForm.submitted || emailInput.touched)">
+            <span id="emailErrorMessage" class="text-danger" *ngIf="emailInput.errors?.['required']">Email is required</span>
+            <span id="emailErrorMessage" class="text-danger" *ngIf="emailInput.errors?.['emailValidator']">Invalid email format</span>
+          </ng-template>
         </div>
         <div class="form__control">
           <label for="password">Password</label>
-          <input 
-            formControlName="password"
-            type="password" 
-            id="password"
-            placeholder="Input text"
-          />
-          <div *ngIf="submitted && password.invalid">
-            <p *ngIf="password.errors?.required" class="text-danger">Password is required.</p>
-          </div>
+
+          <input type="password" id="password"  name="password" [(ngModel)]="password" placeholder="Input text"  #passwordInput="ngModel" required/>
+          <ng-template [ngIf]="passwordInput.invalid && (loginForm.submitted || passwordInput.touched)">
+            <span id="passwordErrorMessage" class="text-danger">Password is required.</span>
+          </ng-template>  
         </div>
       </div>
       <div>
         <div class="form__action">
-          <app-button type="submit" [buttonText]="'Login'"></app-button>
+          <app-button [buttonText]="'Login'"></app-button>
         </div>
         <div class="form__text">
-          If you don't have an account you may <strong>Register</strong>
+          If you don't have an account you may <strong>Registration</strong>
         </div>
       </div>
     </div>
